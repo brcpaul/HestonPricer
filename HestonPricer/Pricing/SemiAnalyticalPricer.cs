@@ -1,38 +1,33 @@
 using System.Numerics;
+using HestonPricer.Models;
 
-class HestonClosedFormPricer
+class SemiAnalyticalPricer
 {
-    private double r;
-    private double q;
-    private double S0;
-    private double K;
-    private double T;
-    private double kappa; // Mean reversion rate
-    private double theta; // Long term volatility 
-    private double V0;
-    private double sigma; // Volatility of variance
-    private double lambda; // Risk premium of volatiliy 
-    private double rho; // Correlation parameter
 
-    public HestonClosedFormPricer(double r, double q, double S0, double K, double T, double kappa, double theta, double lambda, double V0, double sigma, double rho)
+    private OptionBase option;
+    private HestonParameters hestonParameters;
+
+    public SemiAnalyticalPricer(OptionBase option, HestonParameters hestonParameters)
     {
-        this.r = r;
-        this.q = q;
-        this.S0 = S0;
-        this.K = K;
-        this.T = T;
-        this.kappa = kappa;
-        this.theta = theta;
-        this.lambda = lambda;
-        this.V0 = V0;
-        this.sigma = sigma;
-        this.rho = rho;
+        this.option = option;
+        this.hestonParameters = hestonParameters;
     }
 
-    public Complex CharacteristicFunction(Complex phi)
+    private Complex CharacteristicFunction(Complex phi)
     {
 
-        double b = kappa + lambda;
+        double b = hestonParameters.Kappa + hestonParameters.Lambda;
+        double kappa = hestonParameters.Kappa;
+        double theta = hestonParameters.Theta;
+        double sigma = hestonParameters.Sigma;
+        double rho = hestonParameters.Rho;
+        double V0 = hestonParameters.V0;
+        double r = option.RiskFreeRate;
+        double T = option.Maturity;
+        double S0 = option.Strike;
+        double K = option.Strike;
+
+
         Complex i = new Complex(0, 1.0);
         Complex iRhoSigmaPhi = i * rho * sigma * phi;
 
@@ -45,8 +40,13 @@ class HestonClosedFormPricer
         return firstTerm * expTerm;
     }
 
-    public Complex Integrand(double phi)
+    private Complex Integrand(double phi)
     {
+
+        double r = option.RiskFreeRate;
+        double T = option.Maturity;
+        double K = option.Strike;
+
         Complex i = new Complex(0, 1.0);
         Complex firstTerm = Math.Exp(r * T) * CharacteristicFunction(phi - i);
         Complex secondTerm = -K * CharacteristicFunction(phi);
@@ -54,8 +54,14 @@ class HestonClosedFormPricer
         return (firstTerm + secondTerm) / denominator;
     }
 
-    public double RectangleMethodPrice()
+    public double Price()
     {
+
+        double r = option.RiskFreeRate;
+        double T = option.Maturity;
+        double K = option.Strike;
+        double S0 = option.Strike;
+
         double maxPhi = 1000;
         int N = 100000;
         Complex integral = 0;
@@ -66,7 +72,6 @@ class HestonClosedFormPricer
             double phi = dPhi * (2 * i + 1) / 2;
             integral += Integrand(phi) * dPhi;
         }
-
 
         return (S0 - K * Math.Exp(-r * T)) / 2.0 + 1.0 / Math.PI * integral.Real;
     }

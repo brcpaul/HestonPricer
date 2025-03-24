@@ -1,8 +1,7 @@
 using HestonPricer.Models;
 
-public class MonteCarloPricer
+public class MonteCarloPricer : PricerBase
 {
-    private OptionBase option;
     private HestonParameters hestonParameters;
     private int nbPaths;       // Number of Monte Carlo paths
     private int nbSteps;       // Number of time steps for discretization
@@ -10,9 +9,8 @@ public class MonteCarloPricer
 
     private Random random;
 
-    public MonteCarloPricer(OptionBase option, HestonParameters hestonParameters, int nbPaths = 100000, int nbSteps = 200)
+    public MonteCarloPricer(OptionBase option, HestonParameters hestonParameters, int nbPaths = 100000, int nbSteps = 200): base(option)
     {
-        this.option = option;
         this.hestonParameters = hestonParameters;
         this.nbPaths = nbPaths;
         this.nbSteps = nbSteps;
@@ -20,11 +18,8 @@ public class MonteCarloPricer
         random = new Random();
     }
 
-    public double PriceHeston()
-    {
-        return PriceHeston(null);
-    }
-    public double PriceHeston(Random? threadRandom)
+    // Price an Asian option (arithmetic average)
+    public override double Price()
     {
         bool isCall = option.IsCall;
         double T = option.Maturity;

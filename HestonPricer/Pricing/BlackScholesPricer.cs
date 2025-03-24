@@ -1,14 +1,10 @@
 using HestonPricer.Models;
 
-public class BlackScholesPricer
+public class BlackScholesPricer : PricerBase
 {
-    private OptionBase option;
 
-    public BlackScholesPricer(OptionBase option)
-    {
-        this.option = option;
-    }
-    public double Price()
+    public BlackScholesPricer(OptionBase option) : base(option) { } 
+    public override double Price()
     {
         double d1 = (Math.Log(option.SpotPrice / option.Strike) + (option.RiskFreeRate + 0.5 * Math.Pow(option.Volatility, 2)) * option.Maturity) /
                     (option.Strike * Math.Sqrt(option.Maturity));

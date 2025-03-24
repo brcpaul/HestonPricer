@@ -1,15 +1,13 @@
 using System.Numerics;
 using HestonPricer.Models;
 
-class SemiAnalyticalPricer
+class SemiAnalyticalPricer : PricerBase
 {
 
-    private OptionBase option;
     private HestonParameters hestonParameters;
 
-    public SemiAnalyticalPricer(OptionBase option, HestonParameters hestonParameters)
+    public SemiAnalyticalPricer(OptionBase option, HestonParameters hestonParameters): base(option)
     {
-        this.option = option;
         this.hestonParameters = hestonParameters;
     }
 
@@ -54,7 +52,7 @@ class SemiAnalyticalPricer
         return (firstTerm + secondTerm) / denominator;
     }
 
-    public double Price()
+    public override double Price()
     {
 
         double r = option.RiskFreeRate;

@@ -9,7 +9,7 @@ public class MonteCarloPricer : PricerBase
 
     private Random random;
 
-    public MonteCarloPricer(OptionBase option, HestonParameters hestonParameters, int nbPaths = 100000, int nbSteps = 200): base(option)
+    public MonteCarloPricer(OptionBase option, HestonParameters hestonParameters, int nbPaths = 100000, int nbSteps = 200) : base(option)
     {
         this.hestonParameters = hestonParameters;
         this.nbPaths = nbPaths;
@@ -18,10 +18,14 @@ public class MonteCarloPricer : PricerBase
         random = new Random();
     }
 
-    // Price an Asian option (arithmetic average)
     public override double Price()
     {
-        bool isCall = option.IsCall;
+        return Price(random);
+    }
+
+    // Price an Asian option (arithmetic average)
+    public double Price(Random? threadRandom)
+    {
         double T = option.Maturity;
         double S0 = option.SpotPrice;
         double K = option.Strike;
@@ -56,11 +60,6 @@ public class MonteCarloPricer : PricerBase
                 Vt[0] += kappa * (theta - Vt[0]) * dt + sigma * Math.Sqrt(Vt[0]) * dW2 * Math.Sqrt(dt) + 0.25 * sigma * sigma * dt * (dW2 * dW2 - 1);
                 St[0] *= Math.Exp((r - 0.5 * Vt[0]) * dt + Math.Sqrt(Vt[0]) * dW1 * Math.Sqrt(dt));
 
-                if (double.IsNaN(St[0]))
-                {
-                    throw new Exception("St[0] is NaN");
-                }
-
                 Vt[1] += kappa * (theta - Vt[1]) * dt + sigma * Math.Sqrt(Vt[1]) * -dW2 * Math.Sqrt(dt) + 0.25 * sigma * sigma * dt * (dW2 * dW2 - 1);
                 St[1] *= Math.Exp((r - 0.5 * Vt[1]) * dt + Math.Sqrt(Vt[1]) * -dW1 * Math.Sqrt(dt));
 
@@ -70,19 +69,10 @@ public class MonteCarloPricer : PricerBase
 
             sumPayoffs += option.Payoff(path) + option.Payoff(pathAnti) * 1;
 
-            if (double.IsNaN(sumPayoffs))
-            {
-                throw new Exception("Payoff is NaN");
-            }
         }
 
         // Discount the average payoff
         double price = Math.Exp(-r * T) * (sumPayoffs / nbPaths);
-
-        if (price is double.NaN)
-        {
-            throw new Exception("Price is NaN");
-        }
 
         return price;
     }
@@ -91,17 +81,12 @@ public class MonteCarloPricer : PricerBase
     {
 
         double[] prices = new double[nbPrices];
-        // Parallel.For(0, nbPrices, i =>
-        // {
-        //     // Generate a new random seed for each thread
-        //     Random threadRandom = new Random(i);
-        //     prices[i] = PriceHeston(threadRandom);
-        // });
-
-        for (int i = 0; i < nbPrices; i++)
+        Parallel.For(0, nbPrices, i =>
         {
-            prices[i] = PriceHeston();
-        }
+            // Generate a new random seed for each thread
+            Random threadRandom = new Random(i);
+            prices[i] = Price(threadRandom);
+        });
 
         double price = Stats.Mean(prices);
         double stdDev = Stats.StandardDeviation(prices);

@@ -38,37 +38,38 @@ public class MonteCarloPricer : PricerBase
         double dt = T / nbSteps;
         double sumPayoffs = 0.0;
 
-        for (int i = 0; i < nbPaths / 2; i++)
+        for (int i = 0; i < this.nbPaths; i++)
         {
+            double pathPayoff = 0;
 
-            double[] St = new double[] { S0, S0 };
-            double[] Vt = new double[] { V0, V0 };
             double[] path = new double[nbSteps];
-            double[] pathAnti = new double[nbSteps];
+            double St = S0;
+            double Vt = V0;
 
             for (int step = 0; step < nbSteps; step++)
             {
-                // Generate correlated random variables
-                double[] normals = RandomNumberGenerator.GenerateCorrelatedNormals(rho, threadRandom);
-                double dW1 = normals[0];
-                double dW2 = normals[1];
+                double[] sample = RandomNumberGenerator.GenerateCorrelatedNormals(rho, threadRandom);
+                double dW1 = sample[0];
+                double dW2 = sample[1];
 
-                // Ensure variance remains positive
-                Vt[0] = Math.Max(0, Vt[0]);
-                Vt[1] = Math.Max(0, Vt[1]);
+                Vt = Math.Max(0, Vt);
+                double sqrtVt = Math.Sqrt(Vt);
 
-                Vt[0] += kappa * (theta - Vt[0]) * dt + sigma * Math.Sqrt(Vt[0]) * dW2 * Math.Sqrt(dt) + 0.25 * sigma * sigma * dt * (dW2 * dW2 - 1);
-                St[0] *= Math.Exp((r - 0.5 * Vt[0]) * dt + Math.Sqrt(Vt[0]) * dW1 * Math.Sqrt(dt));
+                Vt += kappa * (theta - Vt) * dt + sigma * sqrtVt * dW2 * Math.Sqrt(dt) + 0.25 * sigma * sigma * dt * (dW2 * dW2 - 1);
+                St *= Math.Exp((r - 0.5 * Vt) * dt + sqrtVt * dW1 * Math.Sqrt(dt));
 
-                Vt[1] += kappa * (theta - Vt[1]) * dt + sigma * Math.Sqrt(Vt[1]) * -dW2 * Math.Sqrt(dt) + 0.25 * sigma * sigma * dt * (dW2 * dW2 - 1);
-                St[1] *= Math.Exp((r - 0.5 * Vt[1]) * dt + Math.Sqrt(Vt[1]) * -dW1 * Math.Sqrt(dt));
-
-                path[step] = St[0];
-                pathAnti[step] = St[1];
+                path[step] = St;
             }
 
-            sumPayoffs += option.Payoff(path) + option.Payoff(pathAnti) * 1;
+            // Average price over the period
+            double avgPrice = St;//sumPrices / nbSteps;
 
+            // Calculate the payoff
+            double payoff = Math.Max(0, avgPrice - K);
+
+            pathPayoff += payoff;
+
+            sumPayoffs += pathPayoff;
         }
 
         // Discount the average payoff

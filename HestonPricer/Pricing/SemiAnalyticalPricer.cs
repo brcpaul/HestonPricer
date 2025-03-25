@@ -4,11 +4,8 @@ using HestonPricer.Models;
 class SemiAnalyticalPricer : PricerBase
 {
 
-    private HestonParameters hestonParameters;
-
-    public SemiAnalyticalPricer(OptionBase option, HestonParameters hestonParameters): base(option)
+    public SemiAnalyticalPricer(OptionBase option, HestonParameters hestonParameters) : base(option, hestonParameters)
     {
-        this.hestonParameters = hestonParameters;
     }
 
     private Complex CharacteristicFunction(Complex phi)
@@ -22,7 +19,7 @@ class SemiAnalyticalPricer : PricerBase
         double V0 = hestonParameters.V0;
         double r = option.RiskFreeRate;
         double T = option.Maturity;
-        double S0 = option.Strike;
+        double S0 = option.SpotPrice;
         double K = option.Strike;
 
 
@@ -58,7 +55,7 @@ class SemiAnalyticalPricer : PricerBase
         double r = option.RiskFreeRate;
         double T = option.Maturity;
         double K = option.Strike;
-        double S0 = option.Strike;
+        double S0 = option.SpotPrice;
 
         double maxPhi = 1000;
         int N = 100000;

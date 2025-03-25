@@ -1,13 +1,12 @@
 ﻿using HestonPricer.Models;
 
 double r = 0.03;      // Taux sans risque
-double q = 0.00;      // Rendement du dividende
 double S0 = 100.0;    // Prix initial
 double K = 100.0;     // Prix d'exercice
 double T = 1.0;       // Maturité (en années)
 double kappa = 1.5768;   // Taux de retour à la moyenne
 double theta = 0.0398;  // Variance à long terme
-double vol = 0.31;     // Volatilité initiale
+double vol = 0.316227;     // Volatilité initiale
 double sigma = 0.3;   // Volatilité de la volatilité
 double rho = -0.5711;    // Corrélation
 double lambda = 0.575; // Risk premium of volatiliy 
@@ -21,28 +20,28 @@ EuropeanOption o = new(
     true
 );
 
-HestonParameters hestonParameters = new(
-    kappa * 0,
-    theta * 0,
+// BlackScholesPricer bs = new BlackScholesPricer(o);
+// double bsPrice = bs.Price();
+// Console.WriteLine($"Prix de l'option européenne (BS): {bsPrice}");
+
+HestonParameters hestonParameters = new HestonParameters(
+    kappa,
+    theta,
     vol * vol,
-    sigma * 0,
-    rho * 0
+    sigma,
+    rho
 );
 
-// HestonClosedFormPricer pricer = new HestonClosedFormPricer(r, q, S0, K, T, kappa, theta, lambda, V0, sigma, rho);
-// double price = pricer.RectangleMethodPrice();
-// Console.WriteLine($"Prix de l'option asiatique: {price}");
+SemiAnalyticalPricer pricer = new SemiAnalyticalPricer(o, hestonParameters);
+string parameter = "Kappa";
+double[,] prices = pricer.PriceOverParameter(parameter, 0.2, 10);
 
+for (int i = 0; i < prices.GetLength(0); i++)
+{
+    Console.WriteLine($"{parameter} : {prices[i, 0]}");
+    Console.WriteLine($"Price : {prices[i, 1]}");
+}
 
-var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
-double[] result = new MonteCarloPricer(
-    o, hestonParameters, 1000, 100
-).Price(100);
-
-stopwatch.Stop();
-Console.WriteLine($"Time elapsed: {stopwatch.ElapsedMilliseconds} ms");
-
-Console.WriteLine($"Prix de l'option asiatique: {result[0]}");
-Console.WriteLine($"Marge d'erreur à 95%: {result[1]}");
-Console.WriteLine("Std Dev: " + result[2]);
+Derivatives analyzer = new Derivatives(pricer);
+double delta = analyzer.FirstOrderDerivative("SpotPrice", 0.0001);
+Console.WriteLine($"Delta : {delta}");

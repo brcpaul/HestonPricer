@@ -16,11 +16,6 @@ public static class RandomNumberGenerator
         double z0 = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Cos(2.0 * Math.PI * u2);
         double z1 = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
 
-        if (double.IsNaN(z0) || double.IsInfinity(z0))
-        {
-            throw new Exception("Generated normal variables are NaN");
-        }
-
         double x = z0;
         double y = rho * z0 + Math.Sqrt(1 - rho * rho) * z1;
 
@@ -30,6 +25,5 @@ public static class RandomNumberGenerator
     public static void SetRandom(Random random)
     {
         RandomNumberGenerator.random = random;
-        Console.WriteLine("Random number generator seed set to: " + random.GetHashCode());
     }
 }

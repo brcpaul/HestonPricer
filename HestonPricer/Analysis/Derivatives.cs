@@ -13,14 +13,14 @@ public class Derivatives
     {
         double originalValue = GetVariableValue(variable);
         SetVariableValue(variable, originalValue + h);
-        double valuePlusH = pricer.Price(); // Assuming Payoff method can handle null for simplicity
+        double valuePlusH = pricer.Price();
         SetVariableValue(variable, originalValue - h);
         double valueMinusH = pricer.Price();
         SetVariableValue(variable, originalValue);
         return (valuePlusH - valueMinusH) / (2 * h);
     }
 
-    public double SecondOrderDerivative(string variable , double h = 0.0001)
+    public double SecondOrderDerivative(string variable, double h = 0.0001)
     {
         double originalValue = GetVariableValue(variable);
         SetVariableValue(variable, originalValue + h);

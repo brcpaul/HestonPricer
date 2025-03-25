@@ -38,4 +38,26 @@ public class Stats
         return 1.0 - pdf * (b1 * k + b2 * Math.Pow(k, 2) + b3 * Math.Pow(k, 3) + b4 * Math.Pow(k, 4) + b5 * Math.Pow(k, 5));
     }
 
+    public static double Correlation(double[] a, double[] b) {
+        if (a.Length != b.Length)
+        {
+            throw new ArgumentException("Arrays must be of the same length.");
+        }
+
+        double meanA = Mean(a);
+        double meanB = Mean(b);
+        double sumAB = 0.0;
+        double sumA2 = 0.0;
+        double sumB2 = 0.0;
+
+        for (int i = 0; i < a.Length; i++)
+        {
+            sumAB += (a[i] - meanA) * (b[i] - meanB);
+            sumA2 += Math.Pow(a[i] - meanA, 2);
+            sumB2 += Math.Pow(b[i] - meanB, 2);
+        }
+
+        return sumAB / Math.Sqrt(sumA2 * sumB2);
+    }
+
 }

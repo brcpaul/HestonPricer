@@ -2,7 +2,7 @@ namespace HestonPricer.Models
 {
     public class EuropeanOption : OptionBase
     {
-        public EuropeanOption(double spotPrice, double strike, double maturity, double riskFreeRate, double? volatility, bool isCall) : base(spotPrice, strike, maturity, riskFreeRate, volatility, isCall)
+        public EuropeanOption(double spotPrice, double strike, double maturity, double riskFreeRate, bool isCall) : base(spotPrice, strike, maturity, riskFreeRate, isCall)
         {
         }
 

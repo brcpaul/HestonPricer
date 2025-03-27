@@ -4,12 +4,12 @@ public abstract class PricerBase
 {
 
     protected OptionBase option;
-    protected HestonParameters? hestonParameters;
-    public PricerBase(OptionBase option)
+    protected HestonParameters hestonParameters;
+    public PricerBase(OptionBase option, double volatility)
     {
         this.option = option;
+        hestonParameters = new HestonParameters(0, 0, volatility*volatility, 0, 0);
     }
-
     public PricerBase(OptionBase option, HestonParameters hestonParameters)
     {
         this.option = option;
@@ -23,13 +23,13 @@ public abstract class PricerBase
 
     public abstract double Price();
 
-    public double[,] PriceOverParameter(string parameter, double range, int steps)
+    public double[,] PriceOverParameter(string parameter, double min, double max, int steps)
     {
         double[,] result = new double[steps+1, 2];
         double originalValue = GetVariableValue(parameter);
         for (int i = 0; i < steps+1; i += 1)
         {
-            SetVariableValue(parameter, originalValue + range * ((double)i / steps - 0.5));
+            SetVariableValue(parameter, min + (max-min) * ((double)i / steps - 0.5));
             result[i, 0] = GetVariableValue(parameter);
             result[i, 1] = Price();
         }
@@ -37,12 +37,12 @@ public abstract class PricerBase
         return result;
     }
 
-    public double[,] SensiOverParameter(string sensi, string parameter, double range, int steps) {
+    public double[,] SensiOverParameter(string sensi, string parameter, double min, double max, int steps) {
         double[,] result = new double[steps+1, 2];
         double originalValue = GetVariableValue(parameter);
         for (int i = 0; i < steps+1; i += 1)
         {
-            SetVariableValue(parameter, originalValue + range * ((double)i / steps - 0.5));
+            SetVariableValue(parameter, min + (max-min) * ((double)i / steps - 0.5));
             result[i, 0] = GetVariableValue(parameter);
             result[i, 1] = FirstOrderDerivative(sensi,0.01);
         }

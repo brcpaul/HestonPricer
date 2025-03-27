@@ -2,16 +2,14 @@ using HestonPricer.Models;
 
 public class MonteCarloPricer : PricerBase
 {
-    private HestonParameters hestonParameters;
     private int nbPaths;       // Number of Monte Carlo paths
     private int nbSteps;       // Number of time steps for discretization
                                // private bool antithetic;   // Use antithetic variates for variance reduction
 
     private Random random;
 
-    public MonteCarloPricer(OptionBase option, HestonParameters hestonParameters, int nbPaths = 100000, int nbSteps = 200) : base(option)
+    public MonteCarloPricer(OptionBase option, HestonParameters hestonParameters, int nbPaths = 100000, int nbSteps = 200) : base(option, hestonParameters)
     {
-        this.hestonParameters = hestonParameters;
         this.nbPaths = nbPaths;
         this.nbSteps = nbSteps;
 
@@ -108,13 +106,13 @@ public class MonteCarloPricer : PricerBase
     }
 
 
-    public double[,] PriceOverParameter(string parameter, double range, int steps, int nbPrices)
+    public double[,] PriceOverParameter(string parameter, double min, double max, int steps, int nbPrices)
     {
         double[,] result = new double[steps+1, 3];
         double originalValue = GetVariableValue(parameter);
         for (int i = 0; i < steps+1; i += 1)
         {
-            SetVariableValue(parameter, originalValue + range * ((double)i / steps - 0.5));
+            SetVariableValue(parameter, min + (max-min)* ((double)i / steps));
             result[i, 0] = GetVariableValue(parameter);
             double[] priceInfos = Price(nbPrices);
             result[i, 1] = priceInfos[0];
@@ -124,12 +122,12 @@ public class MonteCarloPricer : PricerBase
         return result;
     }
 
-    public double[,] SensiOverParameter(string sensi, string parameter, double range, int steps, int nbDraws) {
+    public double[,] SensiOverParameter(string sensi, string parameter, double min, double max, int steps, int nbDraws) {
         double[,] result = new double[steps+1, 3];
         double originalValue = GetVariableValue(parameter);
         for (int i = 0; i < steps+1; i += 1)
         {
-            SetVariableValue(parameter, originalValue + range * ((double)i / steps - 0.5));
+            SetVariableValue(parameter, min + (max-min) * ((double)i / steps));
             result[i, 0] = GetVariableValue(parameter);
             double[] fod = FirstOrderDerivative(sensi, 1, nbDraws);
             result[i, 1] = fod[0];

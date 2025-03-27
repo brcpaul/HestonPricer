@@ -10,16 +10,16 @@ public class ExcelFunctions
         switch (optionType)
         {
             case "EuropeanCall":
-                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, null, true);
+                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, true);
                 break;
             case "EuropeanPut":
-                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, null, false);
+                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, false);
                 break;
             case "AsianCall":
-                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, null, true);
+                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, true);
                 break;
             case "AsianPut":
-                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, null, false);
+                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, false);
                 break;
             default:
                 throw new ArgumentException("Invalid option type");
@@ -37,16 +37,16 @@ public class ExcelFunctions
         switch (optionType)
         {
             case "EuropeanCall":
-                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, null, true);
+                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, true);
                 break;
             case "EuropeanPut":
-                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, null, false);
+                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, false);
                 break;
             case "AsianCall":
-                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, null, true);
+                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, true);
                 break;
             case "AsianPut":
-                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, null, false);
+                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, false);
                 break;
             default:
                 throw new ArgumentException("Invalid option type");
@@ -58,22 +58,22 @@ public class ExcelFunctions
     }
 
     [ExcelFunction(Name = "PriceHestonParams")]
-    public static double[,] PriceOverParameterHeston(string parameter, double range, int steps, string optionType, double spotPrice, double strike, double maturity, double riskFreeRate, double kappa, double theta, double v0, double sigma, double rho, int nbPaths = 100000, int nbSteps=100, int nbPrices=10)
+    public static double[,] PriceOverParameterHeston(string parameter, double min, double max, int steps, string optionType, double spotPrice, double strike, double maturity, double riskFreeRate, double kappa, double theta, double v0, double sigma, double rho, int nbPaths = 10, int nbSteps=100, int nbPrices=10)
     {
         OptionBase option;
         switch (optionType)
         {
             case "EuropeanCall":
-                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, null, true);
+                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, true);
                 break;
             case "EuropeanPut":
-                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, null, false);
+                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, false);
                 break;
             case "AsianCall":
-                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, null, true);
+                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, true);
                 break;
             case "AsianPut":
-                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, null, false);
+                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, false);
                 break;
             default:
                 throw new ArgumentException("Invalid option type");
@@ -81,32 +81,32 @@ public class ExcelFunctions
 
         HestonParameters hestonParameters = new HestonParameters(kappa, theta, v0 * v0, sigma, rho);
         MonteCarloPricer pricer = new MonteCarloPricer(option, hestonParameters, nbPaths, nbSteps);
-        return pricer.PriceOverParameter(parameter, range, steps, nbPrices);
+        return pricer.PriceOverParameter(parameter, min, max, steps, nbPrices);
     }
 
     [ExcelFunction(Name = "PriceBSParams")]
-    public static double[,] PriceOverParameterBS(string parameter, double range, int steps, string optionType, double spotPrice, double strike, double maturity, double riskFreeRate, double volatility)
+    public static double[,] PriceOverParameterBS(string parameter, double min, double max, int steps, string optionType, double spotPrice, double strike, double maturity, double riskFreeRate, double volatility)
     {
         OptionBase option;
         switch (optionType)
         {
             case "EuropeanCall":
-                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, volatility, true);
+                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, true);
                 break;
             case "EuropeanPut":
-                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, volatility, false);
+                option = new EuropeanOption(spotPrice, strike, maturity, riskFreeRate, false);
                 break;
             case "AsianCall":
-                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, volatility, true);
+                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, true);
                 break;
             case "AsianPut":
-                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, volatility, false);
+                option = new AsianOption(spotPrice, strike, maturity, riskFreeRate, false);
                 break;
             default:
                 throw new ArgumentException("Invalid option type");
         }
 
-        BlackScholesPricer pricer = new BlackScholesPricer(option);
-        return pricer.PriceOverParameter(parameter, range, steps);
+        BlackScholesPricer pricer = new BlackScholesPricer(option, volatility);
+        return pricer.PriceOverParameter(parameter, min, max, steps);
     }
 }

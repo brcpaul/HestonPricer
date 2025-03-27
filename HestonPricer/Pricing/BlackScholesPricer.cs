@@ -3,12 +3,14 @@ using HestonPricer.Models;
 public class BlackScholesPricer : PricerBase
 {
 
-    public BlackScholesPricer(OptionBase option) : base(option) { }
+    public BlackScholesPricer(OptionBase option, double volatility) : base(option, volatility) { 
+
+    }
     public override double Price()
     {
 
 
-        double volatility = option.Volatility ?? throw new ArgumentNullException(nameof(option.Volatility), "Volatility cannot be null.");
+        double volatility = Math.Sqrt(hestonParameters.V0);
 
         double d1 = (Math.Log(option.SpotPrice / option.Strike) + (option.RiskFreeRate + 0.5 * Math.Pow(volatility, 2)) * option.Maturity) /
                     (volatility * Math.Sqrt(option.Maturity));

@@ -7,7 +7,7 @@ namespace HestonPricer.Models
         public double Strike { get; set; }
         public double Maturity { get; set; }
         public double RiskFreeRate { get; set; }
-        public double Volatility { get; set; }
+        public double? Volatility { get; set; }
         public bool IsCall { get; set; }
 
         public OptionBase(
@@ -15,7 +15,7 @@ namespace HestonPricer.Models
             double strike,
             double maturity,
             double riskFreeRate,
-            double volatility,
+            double? volatility,
             bool isCall
         )
         {

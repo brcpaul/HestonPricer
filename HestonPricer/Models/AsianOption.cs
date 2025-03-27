@@ -2,7 +2,7 @@ namespace HestonPricer.Models
 {
     public class AsianOption : OptionBase
     {
-        public AsianOption(double spotPrice, double strike, double maturity, double riskFreeRate, double volatility, bool isCall) : base(spotPrice, strike, maturity, riskFreeRate, volatility, isCall)
+        public AsianOption(double spotPrice, double strike, double maturity, double riskFreeRate, double? volatility, bool isCall) : base(spotPrice, strike, maturity, riskFreeRate, volatility, isCall)
         {
         }
 

@@ -9,28 +9,7 @@ public class Derivatives
         this.pricer = pricer;
     }
 
-    public double FirstOrderDerivative(string variable, double h = 0.0001)
-    {
-        double originalValue = GetVariableValue(variable);
-        SetVariableValue(variable, originalValue + h);
-        double valuePlusH = pricer.Price(); // Assuming Payoff method can handle null for simplicity
-        SetVariableValue(variable, originalValue - h);
-        double valueMinusH = pricer.Price();
-        SetVariableValue(variable, originalValue);
-        return (valuePlusH - valueMinusH) / (2 * h);
-    }
-
-    public double SecondOrderDerivative(string variable , double h = 0.0001)
-    {
-        double originalValue = GetVariableValue(variable);
-        SetVariableValue(variable, originalValue + h);
-        double valuePlusH = pricer.Price();
-        SetVariableValue(variable, originalValue - h);
-        double valueMinusH = pricer.Price();
-        SetVariableValue(variable, originalValue);
-        double valueOriginal = pricer.Price();
-        return (valuePlusH - 2 * valueOriginal - valueMinusH) / (h * h);
-    }
+    
 
     private double GetVariableValue(string variable)
     {

@@ -58,7 +58,7 @@ public class ExcelFunctions
     }
 
     [ExcelFunction(Name = "PriceHestonParams")]
-    public static double[,] PriceOverParameterHeston(string parameter, double range, int steps, string optionType, double spotPrice, double strike, double maturity, double riskFreeRate, double kappa, double theta, double v0, double sigma, double rho, int nbPaths = 100000, int nbSteps=100)
+    public static double[,] PriceOverParameterHeston(string parameter, double range, int steps, string optionType, double spotPrice, double strike, double maturity, double riskFreeRate, double kappa, double theta, double v0, double sigma, double rho, int nbPaths = 100000, int nbSteps=100, int nbPrices=10)
     {
         OptionBase option;
         switch (optionType)

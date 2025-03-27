@@ -55,7 +55,7 @@ public class ExcelFunctions
         return pricer.Price(nbPrices);
     }
 
-    public static double[,] PriceOverParameterHeston(string parameter, double range, int steps, string optionType, double spotPrice, double strike, double maturity, double riskFreeRate, double kappa, double theta, double v0, double sigma, double rho, int nbPaths = 100000, int nbSteps=100)
+    public static double[,] PriceOverParameterHeston(string parameter, double range, int steps, string optionType, double spotPrice, double strike, double maturity, double riskFreeRate, double kappa, double theta, double v0, double sigma, double rho, int nbPaths = 100000, int nbSteps=100, int nbPrices=10)
     {
         OptionBase option;
         switch (optionType)
@@ -78,7 +78,7 @@ public class ExcelFunctions
 
         HestonParameters hestonParameters = new HestonParameters(kappa, theta, v0*v0, sigma, rho);
         MonteCarloPricer pricer = new MonteCarloPricer(option, hestonParameters, nbPaths, nbSteps);
-        return pricer.PriceOverParameter(parameter, range, steps);
+        return pricer.PriceOverParameter(parameter, range, steps, nbPrices);
     }
 
     public static double[,] PriceOverParameterBS(string parameter, double range, int steps, string optionType, double spotPrice, double strike, double maturity, double riskFreeRate, double volatility)

@@ -15,11 +15,11 @@ public class TestsPricers
     [SetUp]
     public void Setup()
     {
-        option = new EuropeanOption(100, 100, 1, 0.03, 0.316, true);
+        option = new EuropeanOption(100, 100, 1, 0.03, true);
         hestonParams = new HestonParameters(1.5768, 0.0398, 0.1, 0.3, -0.5711, 0.575);
         hestonAsBlackScholesParams = new HestonParameters(0, 0, 0.1, 0, 0, 0);
 
-        bsPricer = new BlackScholesPricer(option);
+        bsPricer = new BlackScholesPricer(option, 0.316);
 
         saPricer = new SemiAnalyticalPricer(option, hestonParams);
         saBsPricer = new SemiAnalyticalPricer(option, hestonAsBlackScholesParams);
@@ -66,6 +66,13 @@ public class TestsPricers
         double expected = 11.54;
         double result = saPricer.Price();
         Assert.That(result, Is.EqualTo(expected).Within(0.01));
+    }
+
+    [Test]
+    public void TestBlackScholesFirstDerivatives(){
+        double expectedDelta = 0.599;
+        double result = bsPricer.FirstOrderDerivative("SpotPrice", 0.01);
+        Assert.That(result, Is.EqualTo(expectedDelta).Within(0.01));
     }
 
 }

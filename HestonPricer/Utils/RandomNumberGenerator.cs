@@ -10,7 +10,7 @@ public static class RandomNumberGenerator
         {
             throw new ArgumentOutOfRangeException(nameof(rho), "Correlation coefficient must be between -1 and 1.");
         }
-        // Box-Muller transform to generate two independent standard normal variables
+
         double u1 = random.NextDouble();
         double u2 = random.NextDouble();
         double z0 = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Cos(2.0 * Math.PI * u2);

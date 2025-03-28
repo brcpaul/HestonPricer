@@ -91,16 +91,7 @@ public class MonteCarloPricer : PricerBase
         return new double[] { price, marginOfError, stdDev };
     }
 
-    public double FirstOrderDerivative(string variable, double h = 0.0001, Random? threadRandom = null)
-    {
-        double originalValue = GetVariableValue(variable);
-        SetVariableValue(variable, originalValue + h);
-        double valuePlusH = Price(threadRandom);
-        SetVariableValue(variable, originalValue - h);
-        double valueMinusH = Price(threadRandom);
-        SetVariableValue(variable, originalValue);
-        return (valuePlusH - valueMinusH) / (2 * h);
-    }
+    
 
 
     public double[,] PriceOverParameter(string parameter, double min, double max, int steps, int nbPrices)

@@ -1,7 +1,7 @@
 using System.Numerics;
 using HestonPricer.Models;
 
-class SemiAnalyticalPricer : PricerBase
+public class SemiAnalyticalPricer : PricerBase
 {
 
     public SemiAnalyticalPricer(OptionBase option, HestonParameters hestonParameters) : base(option, hestonParameters)

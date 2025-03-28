@@ -17,7 +17,7 @@ public class TestsRandom {
         double[] a = new double[n];
         double[] b = new double[n];
 
-        for(int i=0;i<n;i++) {
+        for(int i=0;i<n;i++) {
             double[] sample = RandomNumberGenerator.GenerateCorrelatedNormals(-0.25);
             a[i] = sample[0];
             b[i] = sample[1];

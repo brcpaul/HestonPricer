@@ -91,9 +91,6 @@ public class MonteCarloPricer : PricerBase
         return new double[] { price, marginOfError, stdDev };
     }
 
-    
-
-
     public double[,] PriceOverParameter(string parameter, double min, double max, int steps, int nbPrices)
     {
         double[,] result = new double[steps+1, 3];

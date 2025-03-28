@@ -4,8 +4,6 @@ public class MonteCarloPricer : PricerBase
 {
     private int nbPaths;       // Number of Monte Carlo paths
     private int nbSteps;       // Number of time steps for discretization
-                               // private bool antithetic;   // Use antithetic variates for variance reduction
-
     private Random random;
 
     public MonteCarloPricer(OptionBase option, HestonParameters hestonParameters, int nbPaths = 100000, int nbSteps = 200) : base(option, hestonParameters)
@@ -21,7 +19,6 @@ public class MonteCarloPricer : PricerBase
         return Price(random);
     }
 
-    // Price an Asian option (arithmetic average)
     public double Price(Random? threadRandom)
     {
         double T = option.Maturity;

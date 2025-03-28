@@ -75,4 +75,12 @@ public class TestsPricers
         Assert.That(result, Is.EqualTo(expectedDelta).Within(0.01));
     }
 
+    [Test]
+    public void TestMonteCarloBSFirstDerivatives(){
+        double expectedDelta = 0.599;
+        double[] result = mcBsPricer.FirstOrderDerivative("SpotPrice", 1, 100);
+        Assert.That(result[0], Is.EqualTo(expectedDelta).Within(0.05));
+        Assert.That(result[1]/result[0], Is.LessThan(0.05));
+    }
+
 }

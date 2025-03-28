@@ -52,6 +52,14 @@ public class ExcelFunctions
         return pricer.Price(nbPrices);
     }
 
+    [ExcelFunction(Name = "FirstOrderDerivativeHeston")] 
+    public static double[] FirstOrderDerivativeHeston(string parameter, string optionType, double spotPrice, double strike, double maturity, double riskFreeRate, double kappa, double theta, double v0, double sigma, double rho, int nbPaths = 100000, int nbSteps = 200)
+    {
+        PricerParameters parameters = ParseParams(optionType, spotPrice, strike, maturity, riskFreeRate, kappa, theta, v0, sigma, rho);
+        MonteCarloPricer pricer = new MonteCarloPricer(parameters.option, parameters.hestonParameters, nbPaths, nbSteps);
+        return pricer.FirstOrderDerivative(parameter, 0.1, 10);
+    }
+
     [ExcelFunction(Name = "PriceHestonParams")]
     public static double[,] PriceOverParameterHeston(string parameter, double min, double max, int steps, string optionType, double spotPrice, double strike, double maturity, double riskFreeRate, double kappa, double theta, double v0, double sigma, double rho, int nbPaths = 10, int nbSteps=100, int nbPrices=10)
     {
@@ -67,7 +75,6 @@ public class ExcelFunctions
         BlackScholesPricer pricer = new BlackScholesPricer(parameters.option, volatility);
         return pricer.PriceOverParameter(parameter, min, max, steps);
     }
-
 
     [ExcelFunction(Name = "SensiHestonParams")] 
     public static double[,] SensiOverParameterHeston(string sensi, string parameter, double min, double max, int steps, string optionType ,double spotPrice, double strike, double maturity, double riskFreeRate, double kappa, double theta, double v0, double sigma, double rho, int nbPaths = 10, int nbSteps=100, int nbPrices=1) {

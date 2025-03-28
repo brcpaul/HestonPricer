@@ -29,7 +29,7 @@ public abstract class PricerBase
         double originalValue = GetVariableValue(parameter);
         for (int i = 0; i < steps+1; i += 1)
         {
-            SetVariableValue(parameter, min + (max-min) * ((double)i / steps - 0.5));
+            SetVariableValue(parameter, min + (max-min) * ((double)i / steps));
             result[i, 0] = GetVariableValue(parameter);
             result[i, 1] = Price();
         }
@@ -42,7 +42,7 @@ public abstract class PricerBase
         double originalValue = GetVariableValue(parameter);
         for (int i = 0; i < steps+1; i += 1)
         {
-            SetVariableValue(parameter, min + (max-min) * ((double)i / steps - 0.5));
+            SetVariableValue(parameter, min + (max-min) * ((double)i / steps));
             result[i, 0] = GetVariableValue(parameter);
             result[i, 1] = FirstOrderDerivative(sensi,0.01);
         }
